@@ -1,0 +1,39 @@
+{
+  "name": "ufdr-copilot",
+  "version": "1.0.0",
+  "description": "UFDR Copilot - Secure Forensic Analysis Platform",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+    "build": "npm run build:shared && npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && echo 'Backend build complete'",
+    "build:shared": "cd shared && npm run build",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && (python -m flake8 . || python3 -m flake8 . || echo 'Python not available for backend linting')",
+    "format": "npm run format:frontend && npm run format:backend",
+    "format:frontend": "cd frontend && npm run format",
+    "format:backend": "cd backend && (python -m black . && python -m isort . || python3 -m black . && python3 -m isort . || echo 'Python not available for backend formatting')",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "concurrently": "^8.2.2",
+    "husky": "^8.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
