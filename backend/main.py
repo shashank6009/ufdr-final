@@ -3,12 +3,13 @@ UFDR Copilot - Main FastAPI Application
 Secure Forensic Analysis Platform
 """
 
-from fastapi import FastAPI, HTTPException
+import os
+
+from dotenv import load_dotenv
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-import os
-from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
@@ -18,7 +19,7 @@ app = FastAPI(
     description="Secure Forensic Analysis Platform API",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
 # CORS middleware configuration
@@ -47,9 +48,7 @@ class ApiResponse(BaseModel):
 async def root():
     """Root endpoint - API health check"""
     return HealthResponse(
-        status="healthy",
-        message="UFDR Copilot API is running",
-        version="1.0.0"
+        status="healthy", message="UFDR Copilot API is running", version="1.0.0"
     )
 
 
@@ -57,9 +56,7 @@ async def root():
 async def health_check():
     """Health check endpoint"""
     return HealthResponse(
-        status="healthy",
-        message="API is operational",
-        version="1.0.0"
+        status="healthy", message="API is operational", version="1.0.0"
     )
 
 
@@ -71,34 +68,27 @@ async def api_status():
         data={
             "api_version": "1.0.0",
             "environment": os.getenv("ENVIRONMENT", "development"),
-            "database_url": os.getenv("DB_URL", "sqlite:///ufdr.db")
+            "database_url": os.getenv("DB_URL", "sqlite:///ufdr.db"),
         },
-        message="API is running successfully"
+        message="API is running successfully",
     )
 
 
 @app.exception_handler(404)
 async def not_found_handler(request, exc):
     return JSONResponse(
-        status_code=404,
-        content={"success": False, "message": "Endpoint not found"}
+        status_code=404, content={"success": False, "message": "Endpoint not found"}
     )
 
 
 @app.exception_handler(500)
 async def internal_error_handler(request, exc):
     return JSONResponse(
-        status_code=500,
-        content={"success": False, "message": "Internal server error"}
+        status_code=500, content={"success": False, "message": "Internal server error"}
     )
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, log_level="info")
